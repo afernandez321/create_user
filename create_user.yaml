@@ -1,0 +1,29 @@
+---
+- name: Ansible Create user
+  hosts: debian
+  become: yes
+  gather_facts: false
+  vars:
+    myuser: aacevedo
+    mypassword: YvRLF123@
+
+  tasks:
+    - name: Add group "aacevedo" to remote node
+      group:
+        name: aacevedo
+        gid: 2212
+        state: present
+
+    - name: Add the user 'Amparo Acevedo'
+      ansible.builtin.user:
+        name: aacevedo
+        shell: /bin/bash
+        uid: 1077
+        group: aacevedo
+        createhome: yes       
+        home: /home/acevedo
+    - name: change password
+      ansible.builtin.user:
+        name: "{{ myuser }}"
+        state: present
+        password: "{{ mypassword | password_hash('sha512') }}"
